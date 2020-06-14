@@ -1,10 +1,10 @@
 cabal-version: 1.24
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.33.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ec74258aa591e3c44193ce9761d4f282c6fb64e4647a58600716af498ff295c0
+-- hash: 0f94e84bb1ea23f769c50764b5269295b2f88b1af12f7f3d8ecb391e8f590ad2
 
 name:           polysemy
 version:        1.3.0.0
@@ -108,6 +108,9 @@ library
     , unagi-chan >=0.4.0.0 && <0.5
   if impl(ghc < 8.6)
     default-extensions: MonadFailDesugaring TypeInType
+  if impl(ghc >= 8.7)
+    build-depends:
+        loopbreaker >=0.1 && <0.2
   if flag(dump-core)
     ghc-options: -fplugin=DumpCore -fplugin-opt=DumpCore:core-html
     build-depends:
@@ -115,6 +118,8 @@ library
   if impl(ghc < 8.2.2)
     build-depends:
         unsupported-ghc-version >1 && <1
+  if impl(ghc >= 8.7)
+    ghc-options: -fplugin=Loopbreaker
   if flag(error-messages)
     cpp-options: -DCABAL_SERIOUSLY_CMON_MATE
   else
@@ -172,6 +177,9 @@ test-suite polysemy-test
     , unagi-chan >=0.4.0.0 && <0.5
   if impl(ghc < 8.6)
     default-extensions: MonadFailDesugaring TypeInType
+  if impl(ghc >= 8.7)
+    build-depends:
+        loopbreaker >=0.1 && <0.2
   default-language: Haskell2010
 
 benchmark polysemy-bench
@@ -204,4 +212,7 @@ benchmark polysemy-bench
     , unagi-chan >=0.4.0.0 && <0.5
   if impl(ghc < 8.6)
     default-extensions: MonadFailDesugaring TypeInType
+  if impl(ghc >= 8.7)
+    build-depends:
+        loopbreaker >=0.1 && <0.2
   default-language: Haskell2010
