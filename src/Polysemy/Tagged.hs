@@ -49,9 +49,16 @@ tag
     -> Sem r a
 tag = hoistSem $ \u -> case decomp u of
   Right (Weaving e s wv ex ins) ->
-    injWeaving $ Weaving (Tagged @k e) s (tag @k . wv) ex ins
-  Left g -> hoist (tag @k) g
+    injWeaving $ Weaving (Tagged @k e) s (tag' @k . wv) ex ins
+  Left g -> hoist (tag' @k) g
 {-# INLINE tag #-}
+
+tag'
+    :: forall k e r a
+     . Member (Tagged k e) r
+    => Sem (e ': r) a
+    -> Sem r a
+tag' = tag @k @e @r @a
 
 
 ------------------------------------------------------------------------------
@@ -94,7 +101,15 @@ retag
     -> Sem r a
 retag = hoistSem $ \u -> case decomp u of
   Right (Weaving (Tagged e) s wv ex ins) ->
-    injWeaving $ Weaving (Tagged @k2 e) s (retag @_ @k2 . wv) ex ins
-  Left g -> hoist (retag @_ @k2) g
+    injWeaving $ Weaving (Tagged @k2 e) s (retag' @_ @k2 . wv) ex ins
+  Left g -> hoist (retag' @_ @k2) g
 {-# INLINE retag #-}
 
+
+retag'
+    :: forall k1 k2 e r a
+     . Member (Tagged k2 e) r
+    => Sem (Tagged k1 e ': r) a
+    -> Sem r a
+retag' = retag @k1 @k2 @e @r @a
+{-# NOINLINE retag' #-}
