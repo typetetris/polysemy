@@ -14,8 +14,12 @@ type family Append l r where
 
 extendMembership :: forall r r' e. ElemOf e r -> ElemOf e (Append r r')
 extendMembership Here = Here
-extendMembership (There e) = There (extendMembership @_ @r' e)
+extendMembership (There e) = There (extendMembership' @_ @r' e)
 {-# INLINE extendMembership #-}
+
+extendMembership' :: forall r r' e. ElemOf e r -> ElemOf e (Append r r')
+extendMembership' = extendMembership @r @r' @e
+{-# NOINLINE extendMembership' #-}
 
 subsumeMembership :: forall r r' e. Members r r' => ElemOf e r -> ElemOf e r'
 subsumeMembership Here = membership @e @r'
@@ -26,8 +30,17 @@ weakenList :: forall r' r m a
             . KnownList r'
            => Union r m a
            -> Union (Append r' r) m a
-weakenList u = unconsKnownList @_ @r' u (\_ (_ :: Proxy r'') -> weaken (weakenList @r'' u))
+weakenList u = unconsKnownList @_ @r' u (\_ (_ :: Proxy r'') -> weaken (weakenList' @r'' u))
 {-# INLINE weakenList #-}
+
+weakenList' :: forall r' r m a
+            . KnownList r'
+           => Union r m a
+           -> Union (Append r' r) m a
+weakenList' = weakenList @r' @r @m @a
+{-# NOINLINE weakenList' #-}
+
+
 
 
 ------------------------------------------------------------------------------

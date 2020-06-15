@@ -45,9 +45,16 @@ sendBundle
 sendBundle = hoistSem $ \u -> case decomp u of
   Right (Weaving e s wv ex ins) ->
     injWeaving $
-      Weaving (Bundle (membership @e @r') e) s (sendBundle @e @r' . wv) ex ins
-  Left g -> hoist (sendBundle @e @r') g
+      Weaving (Bundle (membership @e @r') e) s (sendBundle' @e @r' . wv) ex ins
+  Left g -> hoist (sendBundle' @e @r') g
 {-# INLINE sendBundle #-}
+
+sendBundle'  :: forall e r' r a
+   . (Member e r', Member (Bundle r') r)
+  => Sem (e ': r) a
+  -> Sem r a
+sendBundle' = sendBundle @e @r' @r @a
+{-# NOINLINE sendBundle' #-}
 
 ------------------------------------------------------------------------------
 -- | Run a @'Bundle' r@ by prepending @r@ to the effect stack.

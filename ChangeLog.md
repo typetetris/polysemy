@@ -1,6 +1,11 @@
 # Changelog for polysemy
 
 
+## 1.3.0.1 (2020-06-15)
+
+- Works with 8.10, by using loopbreaker and some manually broken loops,
+  where loopbreaker wasn't working correctly.
+
 ## 1.3.0.0 (2020-02-14)
 
 ### Breaking Changes
